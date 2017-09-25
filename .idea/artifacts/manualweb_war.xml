@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="manualweb:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="manualweb.war">
+      <element id="artifact" artifact-name="manualweb:war exploded" />
+    </root>
+  </artifact>
+</component>
