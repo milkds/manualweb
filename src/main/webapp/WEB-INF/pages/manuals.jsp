@@ -111,7 +111,7 @@
        </tr>
         <c:forEach items="${listManuals.manuals}" var ="manual">
             <tr>
-                <td><a href="manualweb/manualdata/${manual.id}" target="_blank">${manual.id}</a></td>
+                <td><a href="/manualdata/${manual.id}" target="_blank">${manual.id}</a></td>
                 <td>${manual.brand}</td>
                 <td>${manual.partNo}</td>
                 <td>${manual.docType}</td>
