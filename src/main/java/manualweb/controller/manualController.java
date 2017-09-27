@@ -38,7 +38,6 @@ public class manualController {
 
     @RequestMapping("filter")
     public String filterManuals (Model model, @ModelAttribute ("filter") ManualFilter filter){
-        System.out.println("in filter we get");
         model.addAttribute("manual", new Manual());
         ManualFilter mf = this.manualService.filterManuals(filter);
         model.addAttribute("filter", filter);
@@ -75,7 +74,7 @@ public class manualController {
         return "manuals";
     }
 
-    @RequestMapping("manualdata/{id}")
+    @RequestMapping("/manualdata/{id}")
     public String manualData(@PathVariable("id") int id, Model model){
         model.addAttribute("manual", this.manualService.getManualById(id));
 
