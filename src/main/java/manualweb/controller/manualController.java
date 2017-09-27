@@ -61,7 +61,7 @@ public class manualController {
     @RequestMapping("/remove/{id}")
     public String removeManual(@PathVariable("id") int id){
         this.manualService.removeManual(id);
-
+        //
         return "redirect:/manuals";
     }
 
