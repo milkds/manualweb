@@ -74,7 +74,7 @@ public class manualController {
         return "manuals";
     }
 
-    @RequestMapping("/manualdata/{id}")
+    @RequestMapping("manualdata/{id}")
     public String manualData(@PathVariable("id") int id, Model model){
         model.addAttribute("manual", this.manualService.getManualById(id));
 
