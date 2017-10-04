@@ -48,7 +48,7 @@ public class ManualDaoImpl implements ManualDao {
 
     public ManualFilter listManuals() {
         ManualFilter manualFilter = new ManualFilter();
-        manualFilter.setManuals(getRawManuals());
+        manualFilter.setManuals(getRawManuals(manualFilter));
         manualFilter.populateFilters();
 
         return manualFilter;
@@ -56,18 +56,68 @@ public class ManualDaoImpl implements ManualDao {
 
     public ManualFilter filterManuals(ManualFilter filter) {
         ManualFilter manualFilter = new ManualFilter();
-        manualFilter.setManuals(getRawManuals());
+        manualFilter.setManuals(getRawManuals(filter));
         manualFilter.setFilters(filter);
-        manualFilter.filterManuals();
+       // manualFilter.filterManuals();
         manualFilter.populateFilters();
 
         return manualFilter;
     }
 
     @SuppressWarnings("unchecked")
-    private List<Manual> getRawManuals(){
+    private List<Manual> getRawManuals(ManualFilter filter){
         Session session = this.sessionFactory.getCurrentSession();
-        return session.createQuery("from Manual").list();
+
+        return session.createQuery(this.buildQuery(filter)).list();
+    }
+
+    private String buildQuery(ManualFilter filter){
+        StringBuilder sb = new StringBuilder();
+        boolean hasFilters = false;
+        sb.append("from Manual");
+        String brand = filter.getManualBrand();
+        if (brand!=null && brand.length()!=0){
+            sb.append("brand = '");
+            sb.append(brand);
+            sb.append("'");
+            hasFilters = true;
+        }
+        String partNo = filter.getManualPart();
+        if (partNo!=null && partNo.length()!=0){
+            if (hasFilters){
+                sb.append(" AND ");
+            }
+            sb.append("partNo = '");
+            sb.append(partNo);
+            sb.append("'");
+            hasFilters = true;
+        }
+        String docType = filter.getManualDoctype();
+        if (docType!=null && docType.length()!=0){
+            if (hasFilters){
+                sb.append(" AND ");
+            }
+            sb.append("docType = '");
+            sb.append(docType);
+            sb.append("'");
+            hasFilters = true;
+        }
+        String category = filter.getManualCategory();
+        if (category!=null && category.length()!=0){
+            if (hasFilters){
+                sb.append(" AND ");
+            }
+            sb.append("category = '");
+            sb.append(category);
+            sb.append("'");
+            hasFilters = true;
+        }
+        String query = sb.toString();
+        if (hasFilters){
+            query = query.replace("from Manual", "from Manual where ");
+        }
+
+        return query;
     }
 
     public void setSessionFactory(SessionFactory sessionFactory) {

@@ -58,43 +58,33 @@
     <table class="tg">
         <tr>
             <td width="80"></td>
+            <form:form action="${filterAction}" commandName="filter">
             <td width="120">
-                <form:form action="${filterAction}" commandName="filter">
                     <form:select path="manualBrand">
-                    <form:option value="NONE" label="--- Select ---"/>
+                    <form:option value="" label="--- Select ---"/>
                     <form:options items="${listManuals.brands}" />
                     </form:select>
                     <input type="submit" value="<spring:message text="Filter"/>"/>
-                </form:form>
-
             </td>
             <td width="120">
-                <form:form action="${filterAction}" commandName="filter">
                     <form:select path="manualPart">
-                        <form:option value="NONE" label="--- Select ---"/>
+                        <form:option value="" label="--- Select ---"/>
                         <form:options items="${listManuals.parts}" />
                     </form:select>
-                    <input type="submit" value="<spring:message text="Filter"/>"/>
-                </form:form>
             </td>
             <td width="120">
-                <form:form action="${filterAction}" commandName="filter">
                     <form:select path="manualDoctype">
-                        <form:option value="NONE" label="--- Select ---"/>
+                        <form:option value="" label="--- Select ---"/>
                         <form:options items="${listManuals.docTypes}" />
                     </form:select>
-                    <input type="submit" value="<spring:message text="Filter"/>"/>
-                </form:form>
             </td>
             <td width="120">
-                <form:form action="${filterAction}" commandName="filter">
                     <form:select path="manualCategory">
-                        <form:option value="NONE" label="--- Select ---"/>
+                        <form:option value="" label="--- Select ---"/>
                         <form:options items="${listManuals.categories}" />
                     </form:select>
-                    <input type="submit" value="<spring:message text="Filter"/>"/>
-                </form:form>
             </td>
+            </form:form>
             <td width="240"></td>
             <td width="60"></td>
             <td width="60"></td>
