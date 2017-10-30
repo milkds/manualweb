@@ -14,4 +14,6 @@ public interface ManualService {
     Manual getManualById(int id);
     ManualFilter listManuals();
     ManualFilter filterManuals(ManualFilter filter);
+
+    ManualFilter loadManualsFromPage(ManualFilter filter, int pageNo);
 }

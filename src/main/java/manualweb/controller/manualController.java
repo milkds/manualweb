@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-
 
 @Controller
 public class manualController {
@@ -33,6 +31,7 @@ public class manualController {
         ManualFilter manualFilter = this.manualService.listManuals();
         model.addAttribute("filter", new ManualFilter());
         model.addAttribute("listManuals", manualFilter);
+
         return "manuals";
     }
 
@@ -44,6 +43,16 @@ public class manualController {
         model.addAttribute("listManuals", mf);
 
         return "manuals";
+    }
+    @RequestMapping("manuals/p={pageNo}")
+    public String loadManualsFromPage (Model model, @PathVariable("pageNo") int pageNo) {
+        model.addAttribute("manual", new Manual());
+        ManualFilter filter = new ManualFilter();
+        ManualFilter mf = this.manualService.loadManualsFromPage(filter, pageNo);
+        model.addAttribute("filter", filter);
+        model.addAttribute("listManuals", mf);
+
+        return "/manuals";
     }
 
     @RequestMapping(value = "manuals/add", method = RequestMethod.POST)

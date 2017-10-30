@@ -54,7 +54,42 @@
     <h1>Manual List</h1>
 
 <c:if test="${!empty listManuals.manuals}">
-    <c:url var="filterAction" value="filter"/>
+    <c:url var="filterAction" value="/filter"/>
+
+    <c:if test="${!listManuals.hasFilters}">
+        <c:if test="${listManuals.totalQueryResults/listManuals.maxResults>1}">
+            <%--before current page--%>
+            <c:if test="${listManuals.currentPage>1}">
+                 <c:if test="${listManuals.currentPage-listManuals.maxPagesOneSide>0}">
+                    <c:forEach var="i" begin="${listManuals.currentPage-listManuals.maxPagesOneSide}" end="${listManuals.currentPage-1}" step="1" >
+                        <a href="/manuals/p=${i}">${i}</a>
+                    </c:forEach>
+                 </c:if>
+                 <c:if test="${listManuals.currentPage-listManuals.maxPagesOneSide<=0}">
+                    <c:forEach var="i" begin="1" end="${listManuals.currentPage-1}" step="1" >
+                        <a href="/manuals/p=${i}">${i}</a>
+                    </c:forEach>
+                 </c:if>
+                ${listManuals.currentPage}
+            </c:if>
+            <c:if test="${listManuals.currentPage<=1}">
+                ${listManuals.currentPage=1}
+            </c:if>
+            <%--after current page--%>
+            <c:if test="${listManuals.totalQueryResults/listManuals.maxResults-listManuals.currentPage>listManuals.maxPagesOneSide}">
+                <c:forEach var="i" begin="${listManuals.currentPage+1}" end="${listManuals.currentPage+listManuals.maxPagesOneSide}" step="1" >
+                    <a href="/manuals/p=${i}">${i}</a>
+                </c:forEach>
+            </c:if>
+            <c:if test="${listManuals.totalQueryResults/listManuals.maxResults-listManuals.currentPage<=listManuals.maxPagesOneSide}">
+                <c:forEach var="i" begin="${listManuals.currentPage+1}" end="${listManuals.totalQueryResults/listManuals.maxResults-1}" step="1" >
+                    <a href="/manuals/p=${i}">${i}</a>
+                </c:forEach>
+            </c:if>
+        </c:if>
+    </c:if>
+
+    <a href="/manuals/p=2">test link</a>
     <table class="tg">
         <tr>
             <td width="80"></td>

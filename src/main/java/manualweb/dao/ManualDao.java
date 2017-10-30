@@ -14,4 +14,6 @@ public interface ManualDao {
     ManualFilter listManuals();
 
     ManualFilter filterManuals(ManualFilter filter);
+
+    ManualFilter loadManualsFromPage(ManualFilter filter, int pageNo);
 }

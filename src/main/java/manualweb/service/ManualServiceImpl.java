@@ -1,6 +1,7 @@
 package manualweb.service;
 
 import manualweb.dao.ManualDao;
+import manualweb.dao.ManualDaoImpl;
 import manualweb.model.Manual;
 import manualweb.model.ManualFilter;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,10 @@ public class ManualServiceImpl implements ManualService {
     @Transactional
     public ManualFilter filterManuals(ManualFilter filter) {
         return this.manualDao.filterManuals(filter);
+    }
+    @Transactional
+    public ManualFilter loadManualsFromPage(ManualFilter filter, int pageNo) {
+        return this.manualDao.loadManualsFromPage(filter, pageNo);
     }
 
 
