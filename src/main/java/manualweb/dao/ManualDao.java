@@ -2,6 +2,7 @@ package manualweb.dao;
 
 import manualweb.model.Manual;
 import manualweb.model.ManualFilter;
+import manualweb.model.UserChoiceKeeper;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface ManualDao {
     Manual getManualById(int id);
     ManualFilter listManuals();
 
-    ManualFilter filterManuals(ManualFilter filter);
+    ManualFilter filterManuals(UserChoiceKeeper choice);
 
     ManualFilter loadManualsFromPage(ManualFilter filter, int pageNo);
 }

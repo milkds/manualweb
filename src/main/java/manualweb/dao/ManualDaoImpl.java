@@ -1,30 +1,31 @@
 package manualweb.dao;
 
+import manualweb.model.Constants;
 import manualweb.model.Manual;
 import manualweb.model.ManualFilter;
-import org.hibernate.Query;
+import manualweb.model.UserChoiceKeeper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 
 @Repository
 public class ManualDaoImpl implements ManualDao {
-    private static final Logger logger = LoggerFactory.getLogger(ManualDaoImpl.class);
-    private static final Short MAX_RESULTS = 3;
-
+    private static final Logger logger = LogManager.getLogger(ManualDaoImpl.class.getName());
     private SessionFactory sessionFactory;
 
     public void addManual(Manual manual) {
         Session session = this.sessionFactory.getCurrentSession();
         session.persist(manual);
-        logger.info("manual added successfully. Manual details: "+manual);
+       logger.info("manual added successfully. Manual details: "+manual);
     }
 
     public void updateManual(Manual manual) {
@@ -53,145 +54,135 @@ public class ManualDaoImpl implements ManualDao {
 
     public ManualFilter listManuals() {
         ManualFilter manualFilter = new ManualFilter();
-        manualFilter.setManuals(getRawManuals(manualFilter));
-        populateFilters(manualFilter);
+        manualFilter.setManuals(getRawManuals(new UserChoiceKeeper(), manualFilter));
+        populateFilters(new UserChoiceKeeper(), manualFilter);
 
         return manualFilter;
     }
 
-    public ManualFilter filterManuals(ManualFilter filter) {
+    public ManualFilter filterManuals(UserChoiceKeeper choice) {
         ManualFilter manualFilter = new ManualFilter();
-        filter.setHasFilters(true);
-        manualFilter.setManuals(getRawManuals(filter));
-        manualFilter.setFilters(filter);
-        populateFilters(manualFilter);
+        choice.setHasFilters(true);
+        manualFilter.setManuals(getRawManuals(choice, manualFilter));
+        populateFilters(choice, manualFilter);
         manualFilter.setHasFilters(true);
 
         return manualFilter;
     }
 
     public ManualFilter loadManualsFromPage(ManualFilter filter, int pageNo) {
-        if (pageNo<1){
-            pageNo = 1;
+        if (pageNo<0){
+            pageNo = 0;
         }
         filter.setCurrentPage(pageNo);
-        filter.setManuals(getRawManuals(filter));
-        populateFilters(filter);
+        filter.setManuals(getRawManuals(new UserChoiceKeeper(), filter));
+        populateFilters(new UserChoiceKeeper(), filter);
 
         return filter;
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Manual> getRawManuals(ManualFilter filter){
-        Session session = this.sessionFactory.getCurrentSession();
-        String queryString = this.buildQuery(filter);
-        Query query = session.createQuery(queryString);
-        if (!filter.isHasFilters()){
-            filter.setTotalQueryResults((Long)(session.createQuery("select count(*) " + queryString).uniqueResult()));
-            int maxResults = filter.getMaxResults();
-            if (filter.getCurrentPage()*maxResults>filter.getTotalQueryResults()){
-                filter.setCurrentPage(0);
-            }
-            query.setMaxResults(maxResults);
-            query.setFirstResult(filter.getCurrentPage()*maxResults);
-        }
-
-        return query.list();
-    }
 
     @SuppressWarnings("unchecked")
-    private void populateFilters(ManualFilter filter){
-        ManualFilter filterStorage = new ManualFilter();
+    private List<Manual> getRawManuals(UserChoiceKeeper choice, ManualFilter filter){
         Session session = this.sessionFactory.getCurrentSession();
-        Query query = session.createQuery("SELECT DISTINCT brand from Manual order by brand");
-        List brandObjects = query.list();
-        Iterator it = brandObjects.iterator();
-        List<String>brands = new ArrayList<String>();
-        while (it.hasNext()){
-            brands.add((String)it.next());
+        Criteria criteria = this.getQuery(session,choice);
+        if (choice.isHasFilters())
+        {
+            return criteria.list();
         }
-        filter.setBrands(brands);
+        int maxResults = Constants.MAX_RESULTS;
+        filter.setTotalQueryResults((Long)(session.createQuery("select count(*) FROM Manual").uniqueResult()));
+        if (filter.getCurrentPage()*maxResults>filter.getTotalQueryResults()){
+            filter.setCurrentPage(0);
+        }
+        criteria.setMaxResults(maxResults);
+        criteria.setFirstResult(filter.getCurrentPage()*maxResults);
 
-        query = session.createQuery("SELECT DISTINCT partNo from Manual order by partNo");
-        List partsObjects = query.list();
-        it = partsObjects.iterator();
-        List<String>parts = new ArrayList<String>();
-        while (it.hasNext()){
-            parts.add((String)it.next());
-        }
-        filter.setParts(parts);
-
-        query = session.createQuery("SELECT DISTINCT docType from Manual order by docType");
-        List docTypeObjects = query.list();
-        it = docTypeObjects.iterator();
-        List<String>docTypes = new ArrayList<String>();
-        while (it.hasNext()){
-            docTypes.add((String)it.next());
-        }
-        filter.setDocTypes(docTypes);
-
-        query = session.createQuery("SELECT DISTINCT category from Manual order by category");
-        List categoryObjects = query.list();
-        it = categoryObjects.iterator();
-        List<String>categories = new ArrayList<String>();
-        while (it.hasNext()){
-            categories.add((String)it.next());
-        }
-        filter.setCategories(categories);
+        return criteria.list();
     }
 
-    private String buildQuery(ManualFilter filter){
-        StringBuilder sb = new StringBuilder();
-        boolean hasFilters = false;
-        sb.append("from Manual");
-        String brand = filter.getManualBrand();
-        if (brand!=null && brand.length()!=0){
-            sb.append("brand = '");
-            sb.append(brand);
-            sb.append("'");
-            hasFilters = true;
+    private void populateFilters(UserChoiceKeeper choice, ManualFilter filter){
+        Session session = this.sessionFactory.getCurrentSession();
+        String brand = choice.getManualBrand();
+
+        Criteria criteria = this.getQuery(session,choice);
+
+        if (brand!=null&&brand.length()>0) {
+            List<String>brands = new ArrayList<String>();
+            brands.add(brand);
+            filter.setBrands(brands);
+
+            criteria = this.getQuery(session, choice);
+            criteria.addOrder(Order.asc("partNo"));
+            criteria.setProjection(Projections.distinct(Projections.property("partNo")));
+            filter.setParts(criteria.list());
+
+            criteria = this.getQuery(session, choice);
+            criteria.addOrder(Order.asc("docType"));
+            criteria.setProjection(Projections.distinct(Projections.property("docType")));
+            filter.setDocTypes(criteria.list());
+
+            criteria = this.getQuery(session, choice);
+            criteria.addOrder(Order.asc("category"));
+            criteria.setProjection(Projections.distinct(Projections.property("category")));
+            filter.setCategories(criteria.list());
         }
-        String partNo = filter.getManualPart();
-        if (partNo!=null && partNo.length()!=0){
-            if (hasFilters){
-                sb.append(" AND ");
+        else {
+            criteria.addOrder(Order.asc("brand"));
+            criteria.setProjection(Projections.distinct(Projections.property("brand")));
+            filter.setBrands(criteria.list());
+        }
+    }
+
+
+
+    @SuppressWarnings("unchecked")
+    private Criteria getQuery(Session session, UserChoiceKeeper choice){
+        Criteria criteria = session.createCriteria(Manual.class);
+        String brand = choice.getManualBrand();
+        if (brand!=null&&brand.length()>0) {
+            criteria.add(Restrictions.like("brand",brand));
+            String partNo = choice.getManualPart();
+            if (partNo!=null&&partNo.length()>0) {
+                criteria.add(Restrictions.like("partNo",partNo));
             }
-            sb.append("partNo = '");
-            sb.append(partNo);
-            sb.append("'");
-            hasFilters = true;
-        }
-        String docType = filter.getManualDoctype();
-        if (docType!=null && docType.length()!=0){
-            if (hasFilters){
-                sb.append(" AND ");
+            String docType = choice.getManualDoctype();
+            if (docType!=null&&docType.length()>0) {
+                criteria.add(Restrictions.like("docType",docType));
             }
-            sb.append("docType = '");
-            sb.append(docType);
-            sb.append("'");
-            hasFilters = true;
-        }
-        String category = filter.getManualCategory();
-        if (category!=null && category.length()!=0){
-            if (hasFilters){
-                sb.append(" AND ");
+            String category = choice.getManualCategory();
+            if (category!=null&&category.length()>0) {
+                criteria.add(Restrictions.like("category",category));
             }
-            sb.append("category = '");
-            sb.append(category);
-            sb.append("'");
-            hasFilters = true;
         }
-        String query = sb.toString();
-        if (hasFilters){
-            query = query.replace("from Manual", "from Manual where ");
-        }
-      //System.out.println(sessionFactory.getCurrentSession().createQuery("select count(*) from Manual where brand = 'Sony'").uniqueResult());
-        return query;
+
+        return criteria;
     }
 
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
+     /*@SuppressWarnings("unchecked")
+    private List<Manual> getRawManuals2(ManualFilter filter){
+        Session session = this.sessionFactory.getCurrentSession();
+        if (filter.isHasFilters())
+        {
+            Criteria criteria = this.getQuery(session,filter);
+            return criteria.list();
+        }
+        String queryString = this.buildQuery(filter);
+        Query query = session.createQuery(queryString);
+        filter.setTotalQueryResults((Long)(session.createQuery("select count(*) " + queryString).uniqueResult()));
+        int maxResults = filter.getMaxResults();
+        if (filter.getCurrentPage()*maxResults>filter.getTotalQueryResults()){
+            filter.setCurrentPage(0);
+        }
+        query.setMaxResults(maxResults);
+        query.setFirstResult(filter.getCurrentPage()*maxResults);
+        logger.info("current page is " + filter.getCurrentPage());
+        return query.list();
+    }*/
 
 }
 

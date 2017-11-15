@@ -24,17 +24,7 @@ public class ManualFilter {
     private int currentPage = 0;
     private Long totalQueryResults = 0L;
 
-    private final int MAX_RESULTS = 2;
-    private final int MAX_PAGES_ONE_SIDE = 2;
-
     private boolean hasFilters = false;
-
-    public void setFilters(ManualFilter filter) {
-        this.setManualBrand(filter.getManualBrand());
-        this.setManualPart(filter.getManualPart());
-        this.setManualDoctype(filter.getManualDoctype());
-        this.setManualCategory(filter.getManualCategory());
-    }
 
     //Getters and Setters
 
@@ -108,12 +98,6 @@ public class ManualFilter {
         this.totalQueryResults = totalQueryResults;
     }
 
-    public int getMaxResults() {
-        return MAX_RESULTS;
-    }
-    public int getMaxPagesOneSide() {
-        return MAX_PAGES_ONE_SIDE;
-    }
 
     public boolean isHasFilters() {
         return hasFilters;

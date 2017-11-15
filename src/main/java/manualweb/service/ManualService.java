@@ -2,6 +2,7 @@ package manualweb.service;
 
 import manualweb.model.Manual;
 import manualweb.model.ManualFilter;
+import manualweb.model.UserChoiceKeeper;
 
 import java.util.List;
 
@@ -13,7 +14,6 @@ public interface ManualService {
     void removeManual(int id);
     Manual getManualById(int id);
     ManualFilter listManuals();
-    ManualFilter filterManuals(ManualFilter filter);
-
+    ManualFilter filterManuals(UserChoiceKeeper choice);
     ManualFilter loadManualsFromPage(ManualFilter filter, int pageNo);
 }

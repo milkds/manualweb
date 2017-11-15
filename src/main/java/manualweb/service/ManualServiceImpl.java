@@ -4,6 +4,7 @@ import manualweb.dao.ManualDao;
 import manualweb.dao.ManualDaoImpl;
 import manualweb.model.Manual;
 import manualweb.model.ManualFilter;
+import manualweb.model.UserChoiceKeeper;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -38,8 +39,8 @@ public class ManualServiceImpl implements ManualService {
     }
 
     @Transactional
-    public ManualFilter filterManuals(ManualFilter filter) {
-        return this.manualDao.filterManuals(filter);
+    public ManualFilter filterManuals(UserChoiceKeeper choice) {
+        return this.manualDao.filterManuals(choice);
     }
     @Transactional
     public ManualFilter loadManualsFromPage(ManualFilter filter, int pageNo) {

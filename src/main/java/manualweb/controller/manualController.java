@@ -3,6 +3,7 @@ package manualweb.controller;
 
 import manualweb.model.Manual;
 import manualweb.model.ManualFilter;
+import manualweb.model.UserChoiceKeeper;
 import manualweb.service.ManualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,17 +30,17 @@ public class manualController {
     public String listManuals (Model model){
         model.addAttribute("manual", new Manual());
         ManualFilter manualFilter = this.manualService.listManuals();
-        model.addAttribute("filter", new ManualFilter());
+        model.addAttribute("choiceKeeper", new UserChoiceKeeper());
         model.addAttribute("listManuals", manualFilter);
 
         return "manuals";
     }
 
     @RequestMapping("filter")
-    public String filterManuals (Model model, @ModelAttribute ("filter") ManualFilter filter){
+    public String filterManuals (Model model, @ModelAttribute ("choiceKeeper") UserChoiceKeeper choiceKeeper){
         model.addAttribute("manual", new Manual());
-        ManualFilter mf = this.manualService.filterManuals(filter);
-        model.addAttribute("filter", filter);
+        ManualFilter mf = this.manualService.filterManuals(choiceKeeper);
+        model.addAttribute("choiceKeeper", choiceKeeper);
         model.addAttribute("listManuals", mf);
 
         return "manuals";
@@ -47,9 +48,9 @@ public class manualController {
     @RequestMapping("manuals/p={pageNo}")
     public String loadManualsFromPage (Model model, @PathVariable("pageNo") int pageNo) {
         model.addAttribute("manual", new Manual());
-        ManualFilter filter = new ManualFilter();
-        ManualFilter mf = this.manualService.loadManualsFromPage(filter, pageNo);
-        model.addAttribute("filter", filter);
+        ManualFilter mf = new ManualFilter();
+        mf = this.manualService.loadManualsFromPage(mf, pageNo);
+        model.addAttribute("choiceKeeper", new UserChoiceKeeper());
         model.addAttribute("listManuals", mf);
 
         return "/manuals";
