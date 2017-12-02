@@ -171,11 +171,6 @@ public class ManualDaoImpl implements ManualDao {
         /* Here we get total manual quantity in db and store it in according field of pageInfoKeeper.*/
         pageInfoKeeper.setTotalQueryResults((Long)(session.createQuery("select count(*) FROM Manual").uniqueResult()));
 
-        /*if (pageInfoKeeper.getCurrentPage()*maxResults>pageInfoKeeper.getTotalQueryResults()){
-            pageInfoKeeper.setCurrentPage(0);
-        }*/
-        //TODO: decide do we have any situation when this check can be actual.
-
         /* Setting max results criteria to query. We don't need to get more manuals, than we show. */
         criteria.setMaxResults(maxResults);
 
