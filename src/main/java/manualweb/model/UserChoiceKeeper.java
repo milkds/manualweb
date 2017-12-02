@@ -1,7 +1,7 @@
 package manualweb.model;
 
 /**
- * Created by Milk on 15.11.2017.
+ * This class keeps user choices from filtering fields for filtering manuals to show on web page.
  */
 public class UserChoiceKeeper {
     private String manualBrand;

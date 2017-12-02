@@ -5,6 +5,10 @@
 <%@ page session="false" %>
 <%@ page import="manualweb.model.Constants" %>
 
+<%--
+This page shows manuals, fields for filtration and fields for adding/editing manuals.
+--%>
+
 <html>
 <head>
     <title>Manuals</title>
@@ -53,25 +57,28 @@
 <br/>
 <br/>
     <h1>Manual List</h1>
-        <%--test string is ${ManualFilter.TEST_CONST}--%>
-<c:if test="${!empty listManuals.manuals}">
+
+<c:if test="${!empty pageInfoKeeper.manuals}">
     <c:url var="filterAction" value="/filter"/>
-    <c:if test="${!listManuals.hasFilters}">
+
+    <%--Pagination--%>
+    <c:if test="${!pageInfoKeeper.hasFilters}">
         <c:set var = "maxPagesOneSide" value = "${Constants.MAX_PAGES_ONE_SIDE}"/>
         <c:set var = "maxResults" value = "${Constants.MAX_RESULTS }"/>
-        <c:set var = "currentPage" value = "${listManuals.currentPage+1}"/>
-        <c:set var = "totalQueryResults" value = "${listManuals.totalQueryResults}"/>
+        <c:set var = "currentPage" value = "${pageInfoKeeper.currentPage+1}"/>
+        <c:set var = "totalQueryResults" value = "${pageInfoKeeper.totalQueryResults}"/>
+
         <c:if test="${totalQueryResults/maxResults>1}">
             <%--before current page--%>
             <c:if test="${currentPage>1}">
                  <c:if test="${currentPage-maxPagesOneSide>0}">
                     <c:forEach var="i" begin="${currentPage-maxPagesOneSide}" end="${currentPage-1}" step="1" >
-                        <a href="/manuals/p=${i-1}">${i}</a>
+                        <a href="/manuals/p=${i}">${i}</a>
                     </c:forEach>
                  </c:if>
                  <c:if test="${currentPage-maxPagesOneSide<=0}">
                     <c:forEach var="i" begin="1" end="${currentPage-1}" step="1" >
-                        <a href="/manuals/p=${i-1}">${i}</a>
+                        <a href="/manuals/p=${i}">${i}</a>
                     </c:forEach>
                  </c:if>
             </c:if>
@@ -79,19 +86,20 @@
             <%--after current page--%>
             <c:if test="${totalQueryResults/maxResults-currentPage>maxPagesOneSide}">
                 <c:forEach var="i" begin="${currentPage+1}" end="${currentPage+maxPagesOneSide}" step="1" >
-                    <a href="/manuals/p=${i-1}">${i}</a>
+                    <a href="/manuals/p=${i}">${i}</a>
                 </c:forEach>
             </c:if>
             <c:if test="${totalQueryResults/maxResults-currentPage<=maxPagesOneSide}">
                 <c:forEach var="i" begin="${currentPage+1}" end="${totalQueryResults/maxResults}" step="1" >
                     <c:if test="${totalQueryResults/maxResults>i-1}">
-                        <a href="/manuals/p=${i-1}">${i}</a>
+                        <a href="/manuals/p=${i}">${i}</a>
                     </c:if>
                 </c:forEach>
             </c:if>
         </c:if>
     </c:if>
 
+    <%--Main table--%>
     <table class="tg">
         <tr>
             <td width="80"></td>
@@ -99,7 +107,7 @@
             <td width="120">
                     <form:select path="manualBrand">
                     <form:option value="" label="--- Select ---"/>
-                    <form:options items="${listManuals.brands}" />
+                    <form:options items="${pageInfoKeeper.brands}" />
                     </form:select>
                     <input type="submit" value="<spring:message text="Filter"/>"/>
             </td>
@@ -107,21 +115,26 @@
             <td width="120">
                     <form:select path="manualPart">
                         <form:option value="" label="--- Select ---"/>
-                        <form:options items="${listManuals.parts}" />
+                        <form:options items="${pageInfoKeeper.parts}" />
                     </form:select>
             </td>
             <td width="120">
                     <form:select path="manualDoctype">
                         <form:option value="" label="--- Select ---"/>
-                        <form:options items="${listManuals.docTypes}" />
+                        <form:options items="${pageInfoKeeper.docTypes}" />
                     </form:select>
             </td>
             <td width="120">
                     <form:select path="manualCategory">
                         <form:option value="" label="--- Select ---"/>
-                        <form:options items="${listManuals.categories}" />
+                        <form:options items="${pageInfoKeeper.categories}" />
                     </form:select>
             </td>
+                </c:if>
+                <c:if test="${empty choiceKeeper.manualBrand}">
+                     <td width="120"></td>
+                     <td width="120"></td>
+                     <td width="120"></td>
                 </c:if>
             </form:form>
             <td width="240"></td>
@@ -138,7 +151,7 @@
             <td width="60"></td>
             <td width="60"></td>
        </tr>
-        <c:forEach items="${listManuals.manuals}" var ="manual">
+        <c:forEach items="${pageInfoKeeper.manuals}" var ="manual">
             <tr>
                 <td><a href="manualdata/${manual.id}" target="_blank">${manual.id}</a></td>
                 <td>${manual.brand}</td>
@@ -152,6 +165,8 @@
         </c:forEach>
     </table>
 </c:if>
+
+    <%--Adding/Editing manual--%>
     <br><br/>
 <hl>Add Manual</hl>
     <br><br/>

@@ -2,6 +2,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
+
+<%--This page shows single manual. For now only fields, in future here will be also shown manual body in pdf/doc.--%>
 <html>
 <head>
     <title>Manual Data</title>

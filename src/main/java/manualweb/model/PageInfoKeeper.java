@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * Created by Milk on 12.09.2017.
+ * This class keeps values for building web page.
  */
-public class ManualFilter {
+public class PageInfoKeeper {
 
     private List<Manual> manuals;
 
@@ -15,11 +15,6 @@ public class ManualFilter {
     private List<String> parts;
     private List<String> docTypes;
     private List<String> categories;
-
-    private String manualBrand;
-    private String manualPart;
-    private String manualDoctype;
-    private String manualCategory;
 
     private int currentPage = 0;
     private Long totalQueryResults = 0L;
@@ -33,31 +28,6 @@ public class ManualFilter {
     }
     public void setManuals(List<Manual> manuals) {
         this.manuals = manuals;
-    }
-
-    public String getManualBrand() {
-        return manualBrand;
-    }
-    public String getManualPart() {
-        return manualPart;
-    }
-    public String getManualDoctype() {
-        return manualDoctype;
-    }
-    public String getManualCategory() {
-        return manualCategory;
-    }
-    public void setManualBrand(String manualBrand) {
-        this.manualBrand = manualBrand;
-    }
-    public void setManualPart(String manualPart) {
-        this.manualPart = manualPart;
-    }
-    public void setManualDoctype(String manualDoctype) {
-        this.manualDoctype = manualDoctype;
-    }
-    public void setManualCategory(String manualCategory) {
-        this.manualCategory = manualCategory;
     }
 
     public List<String> getBrands() {

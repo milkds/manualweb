@@ -2,6 +2,10 @@ package manualweb.model;
 
 import javax.persistence.*;
 
+/**
+ * This class represents manual (user's guide, owner's manual, service manual etc.) for different SOHO appliances
+ */
+
 @Entity
 @Table(name = "manuals")
 public class Manual {

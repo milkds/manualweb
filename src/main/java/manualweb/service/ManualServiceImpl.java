@@ -1,13 +1,11 @@
 package manualweb.service;
 
 import manualweb.dao.ManualDao;
-import manualweb.dao.ManualDaoImpl;
 import manualweb.model.Manual;
-import manualweb.model.ManualFilter;
+import manualweb.model.PageInfoKeeper;
 import manualweb.model.UserChoiceKeeper;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 public class ManualServiceImpl implements ManualService {
@@ -34,19 +32,19 @@ public class ManualServiceImpl implements ManualService {
     }
 
     @Transactional
-    public ManualFilter listManuals() {
+    public PageInfoKeeper listManuals() {
       return this.manualDao.listManuals();
     }
 
     @Transactional
-    public ManualFilter filterManuals(UserChoiceKeeper choice) {
+    public PageInfoKeeper filterManuals(UserChoiceKeeper choice) {
         return this.manualDao.filterManuals(choice);
     }
-    @Transactional
-    public ManualFilter loadManualsFromPage(ManualFilter filter, int pageNo) {
-        return this.manualDao.loadManualsFromPage(filter, pageNo);
-    }
 
+    @Transactional
+    public PageInfoKeeper loadManualsFromPage(int pageNo) {
+        return this.manualDao.loadManualsFromPage(pageNo);
+    }
 
     public void setManualDao(ManualDao manualDao) {
         this.manualDao = manualDao;
